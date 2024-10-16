@@ -37,13 +37,15 @@ public:
 };
 
 int main() {
-    Crop wheatCrop;
-    Animal cow;
+    // Created an array of Crop objects 
+    Crop crops[1];
+    crops[0].plantCrops("wheat", 10);   
+    crops[0].allocateWater(20);
 
-    wheatCrop.plantCrops("wheat", 10);   
-    cow.feedAnimals("cows", 5);          
-    wheatCrop.allocateWater(20);
-    cow.sellProduce("eggs", 10, 15);
+    // Created an array of Animal objects 
+    Animal animals[1];
+    animals[0].feedAnimals("cows", 5);          
+    animals[0].sellProduce("eggs", 10, 15);
 
     return 0;
 }
