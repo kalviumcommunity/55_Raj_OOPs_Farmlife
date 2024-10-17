@@ -37,15 +37,21 @@ public:
 };
 
 int main() {
-    // Created an array of Crop objects 
-    Crop crops[1];
+
+    // dynamically allocated memory 
+
+    Crop* crops = new Crop[1];  
     crops[0].plantCrops("wheat", 10);   
     crops[0].allocateWater(20);
 
-    // Created an array of Animal objects 
-    Animal animals[1];
+    Animal* animals = new Animal[1]; 
     animals[0].feedAnimals("cows", 5);          
     animals[0].sellProduce("eggs", 10, 15);
+
+    // Release dynamically allocated memory 
+
+    delete[] crops;
+    delete[] animals;
 
     return 0;
 }
