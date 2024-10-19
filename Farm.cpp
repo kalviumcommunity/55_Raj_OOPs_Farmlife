@@ -14,11 +14,16 @@ public:
         this->quantity = quantity;
         totalCropsPlanted += quantity;  // Increment the total crops planted
         cout << "You have planted " << this->quantity << " " << this->cropType << " crops. They will be ready to harvest in 5 days." << endl;
-        cout << "Total crops planted: " << totalCropsPlanted << endl;
+        cout << "Total crops planted: " << totalCropsPlanted << endl; 
     }
 
     void allocateWater(int liters) {
         cout << "You allocated " << liters << " liters of water to your crops. The " << this->cropType << " is growing well." << endl;
+    }
+
+    // Static member function to access total crops planted
+    static int getTotalCropsPlanted() {
+        return totalCropsPlanted;
     }
 };
 
@@ -36,12 +41,17 @@ public:
         this->quantity = quantity;
         totalAnimalsFed += quantity;  // Increment the total animals fed
         cout << "You have fed " << this->quantity << " " << this->animalType << ". They will produce milk tomorrow." << endl;
-        cout << "Total animals fed: " << totalAnimalsFed << endl;
+        cout << "Total animals fed: " << totalAnimalsFed << endl;  
     }
 
     void sellProduce(string produce, int qty, int pricePerUnit) {
         int totalPrice = qty * pricePerUnit;
         cout << "You sold " << qty << " " << produce << " for $" << totalPrice << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+    }
+
+    // Static member function to access total animals fed
+    static int getTotalAnimalsFed() {
+        return totalAnimalsFed;
     }
 };
 
