@@ -5,43 +5,48 @@ using namespace std;
 
 class Crop {
 private:
-    string cropType;
+    string cropType;       // Private data members to store crop details
     int quantity;
     static int totalCropsPlanted;  // Static variable to track total crops planted
 
+protected:
+    // Protected method to calculate time to harvest (hidden from outside access)
+    int calculateHarvestTime() const {
+        return 5;  // Harvest time in days
+    }
+
 public:
-    // Mutator (setter) for cropType
+    // Public setter and getter methods to control access to private data
     void setCropType(string type) {
         cropType = type;
     }
 
-    // Accessor (getter) for cropType
     string getCropType() const {
         return cropType;
     }
 
-    // Mutator (setter) for quantity
     void setQuantity(int qty) {
         quantity = qty;
     }
 
-    // Accessor (getter) for quantity
     int getQuantity() const {
         return quantity;
     }
 
-    // Method to plant crops (uses encapsulated data)
+    // Public method to plant crops, which uses internal data and logic
     void plantCrops() {
         totalCropsPlanted += quantity;
-        cout << "You have planted " << quantity << " " << cropType << " crops. They will be ready to harvest in 5 days." << endl;
+        cout << "You have planted " << quantity << " " << cropType 
+             << " crops. They will be ready to harvest in " 
+             << calculateHarvestTime() << " days." << endl;
         cout << "Total crops planted: " << totalCropsPlanted << endl;
     }
 
     void allocateWater(int liters) {
-        cout << "You allocated " << liters << " liters of water to your crops. The " << cropType << " is growing well." << endl;
+        cout << "You allocated " << liters << " liters of water to your crops. "
+             << "The " << cropType << " is growing well." << endl;
     }
 
-    // Static member function to access total crops planted
     static int getTotalCropsPlanted() {
         return totalCropsPlanted;
     }
@@ -52,44 +57,49 @@ int Crop::totalCropsPlanted = 0;
 
 class Animal {
 private:
-    string animalType;
+    string animalType;     // Private data members to store animal details
     int quantity;
     static int totalAnimalsFed;
 
+protected:
+    // Protected method to calculate production time (hidden from outside access)
+    int calculateProductionTime() const {
+        return 1;  // Production time in days
+    }
+
 public:
-    // Mutator (setter) for animalType
+    // Public setter and getter methods for private data
     void setAnimalType(string type) {
         animalType = type;
     }
 
-    // Accessor (getter) for animalType
     string getAnimalType() const {
         return animalType;
     }
 
-    // Mutator (setter) for quantity
     void setQuantity(int qty) {
         quantity = qty;
     }
 
-    // Accessor (getter) for quantity
     int getQuantity() const {
         return quantity;
     }
 
-    // Method to feed animals (uses encapsulated data)
+    // Public method to feed animals, which uses private and protected data
     void feedAnimals() {
         totalAnimalsFed += quantity;
-        cout << "You have fed " << quantity << " " << animalType << ". They will produce milk tomorrow." << endl;
+        cout << "You have fed " << quantity << " " << animalType 
+             << ". They will produce in " << calculateProductionTime() 
+             << " day(s)." << endl;
         cout << "Total animals fed: " << totalAnimalsFed << endl;
     }
 
     void sellProduce(string produce, int qty, int pricePerUnit) {
         int totalPrice = qty * pricePerUnit;
-        cout << "You sold " << qty << " " << produce << " for $" << totalPrice << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+        cout << "You sold " << qty << " " << produce << " for $" << totalPrice 
+             << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
     }
 
-    // Static member function to access total animals fed
     static int getTotalAnimalsFed() {
         return totalAnimalsFed;
     }
@@ -99,23 +109,19 @@ public:
 int Animal::totalAnimalsFed = 0;
 
 int main() {
-    // Dynamically allocated memory for Crop objects
-    Crop* crops = new Crop[1];
-    crops[0].setCropType("wheat");
-    crops[0].setQuantity(10);
-    crops[0].plantCrops();
-    crops[0].allocateWater(20);
+    // Create and use Crop object
+    Crop crop;
+    crop.setCropType("wheat");
+    crop.setQuantity(10);
+    crop.plantCrops();
+    crop.allocateWater(20);
 
-    // Dynamically allocated memory for Animal objects
-    Animal* animals = new Animal[1];
-    animals[0].setAnimalType("cows");
-    animals[0].setQuantity(5);
-    animals[0].feedAnimals();
-    animals[0].sellProduce("eggs", 10, 15);
-
-    // Release dynamically allocated memory
-    delete[] crops;
-    delete[] animals;
+    // Create and use Animal object
+    Animal animal;
+    animal.setAnimalType("cows");
+    animal.setQuantity(5);
+    animal.feedAnimals();
+    animal.sellProduce("milk", 10, 15);
 
     return 0;
 }
