@@ -57,6 +57,13 @@ public:
 
 int Crop::totalCropsPlanted = 0;
 
+// Derived class demonstrating single inheritance
+class VegetableCrop : public Crop {
+public:
+    // Constructor for VegetableCrop calling the base class constructor
+    VegetableCrop(string type, int qty) : Crop(type, qty) {}
+};
+
 class Animal {
 private:
     string animalType;
@@ -112,15 +119,22 @@ public:
 
 int Animal::totalAnimalsFed = 0;
 
-int main() {
-    // Using parameterized constructors
-    Crop crop("wheat", 10);
-    crop.plantCrops();
-    crop.allocateWater(20);
+// Derived class demonstrating multilevel inheritance
+class Livestock : public Animal {
+public:
+    // Constructor for Livestock calling the base class constructor
+    Livestock(string type, int qty) : Animal(type, qty) {}
+};
 
-    Animal animal("cows", 5);
-    animal.feedAnimals();
-    animal.sellProduce("milk", 10, 15);
+int main() {
+    // Using parameterized constructors with inheritance
+    VegetableCrop vegetable("wheat", 10);
+    vegetable.plantCrops();
+    vegetable.allocateWater(20);
+
+    Livestock livestock("cows", 5);
+    livestock.feedAnimals();
+    livestock.sellProduce("milk", 10, 15);
 
     return 0;
 }
