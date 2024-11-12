@@ -98,9 +98,20 @@ public:
         return quantity;
     }
 
+    // Overloaded function for feeding animals with different parameters
     void feedAnimals() {
         totalAnimalsFed += quantity;
         cout << "You have fed " << quantity << " " << animalType
+             << ". They will produce in " << calculateProductionTime()
+             << " day(s)." << endl;
+        cout << "Total animals fed: " << totalAnimalsFed << endl;
+    }
+
+    // Overloaded function with an additional food type and amount
+    void feedAnimals(string foodType, int foodAmount) {
+        totalAnimalsFed += quantity;
+        cout << "You have fed " << quantity << " " << animalType
+             << " with " << foodAmount << " kg of " << foodType
              << ". They will produce in " << calculateProductionTime()
              << " day(s)." << endl;
         cout << "Total animals fed: " << totalAnimalsFed << endl;
@@ -133,7 +144,8 @@ int main() {
     vegetable.allocateWater(20);
 
     Livestock livestock("cows", 5);
-    livestock.feedAnimals();
+    livestock.feedAnimals();  // Calls the basic feedAnimals function
+    livestock.feedAnimals("grass", 20);  // Calls the overloaded feedAnimals function
     livestock.sellProduce("milk", 10, 15);
 
     return 0;
