@@ -3,7 +3,13 @@
 
 using namespace std;
 
-class Crop {
+// Abstract class using a pure virtual function
+class FarmEntity {
+public:
+    virtual void performActivity() const = 0;  // Pure virtual function making FarmEntity an abstract class
+};
+
+class Crop : public FarmEntity {
 private:
     string cropType;
     int quantity;
@@ -15,27 +21,13 @@ protected:
     }
 
 public:
-    // Default constructor
-    Crop() : cropType("unknown"), quantity(0) {}
+    Crop() : cropType("unknown"), quantity(0) {}  // Default constructor
+    Crop(string type, int qty) : cropType(type), quantity(qty) {}  // Parameterized constructor
 
-    // Parameterized constructor
-    Crop(string type, int qty) : cropType(type), quantity(qty) {}
-
-    void setCropType(string type) {
-        cropType = type;
-    }
-
-    string getCropType() const {
-        return cropType;
-    }
-
-    void setQuantity(int qty) {
-        quantity = qty;
-    }
-
-    int getQuantity() const {
-        return quantity;
-    }
+    void setCropType(string type) { cropType = type; }
+    string getCropType() const { return cropType; }
+    void setQuantity(int qty) { quantity = qty; }
+    int getQuantity() const { return quantity; }
 
     void plantCrops() {
         totalCropsPlanted += quantity;
@@ -50,21 +42,17 @@ public:
              << "The " << cropType << " is growing well." << endl;
     }
 
-    static int getTotalCropsPlanted() {
-        return totalCropsPlanted;
+    // Override the pure virtual function from FarmEntity
+    void performActivity() const override {
+        cout << "The crop activity: Planting and watering " << cropType << " crops." << endl;
     }
+
+    static int getTotalCropsPlanted() { return totalCropsPlanted; }
 };
 
 int Crop::totalCropsPlanted = 0;
 
-// Derived class demonstrating single inheritance
-class VegetableCrop : public Crop {
-public:
-    // Constructor for VegetableCrop calling the base class constructor
-    VegetableCrop(string type, int qty) : Crop(type, qty) {}
-};
-
-class Animal {
+class Animal : public FarmEntity {
 private:
     string animalType;
     int quantity;
@@ -76,42 +64,17 @@ protected:
     }
 
 public:
-    // Default constructor
-    Animal() : animalType("unknown"), quantity(0) {}
+    Animal() : animalType("unknown"), quantity(0) {}  // Default constructor
+    Animal(string type, int qty) : animalType(type), quantity(qty) {}  // Parameterized constructor
 
-    // Parameterized constructor
-    Animal(string type, int qty) : animalType(type), quantity(qty) {}
+    void setAnimalType(string type) { animalType = type; }
+    string getAnimalType() const { return animalType; }
+    void setQuantity(int qty) { quantity = qty; }
+    int getQuantity() const { return quantity; }
 
-    void setAnimalType(string type) {
-        animalType = type;
-    }
-
-    string getAnimalType() const {
-        return animalType;
-    }
-
-    void setQuantity(int qty) {
-        quantity = qty;
-    }
-
-    int getQuantity() const {
-        return quantity;
-    }
-
-    // Overloaded function for feeding animals with different parameters
     void feedAnimals() {
         totalAnimalsFed += quantity;
         cout << "You have fed " << quantity << " " << animalType
-             << ". They will produce in " << calculateProductionTime()
-             << " day(s)." << endl;
-        cout << "Total animals fed: " << totalAnimalsFed << endl;
-    }
-
-    // Overloaded function with an additional food type and amount
-    void feedAnimals(string foodType, int foodAmount) {
-        totalAnimalsFed += quantity;
-        cout << "You have fed " << quantity << " " << animalType
-             << " with " << foodAmount << " kg of " << foodType
              << ". They will produce in " << calculateProductionTime()
              << " day(s)." << endl;
         cout << "Total animals fed: " << totalAnimalsFed << endl;
@@ -123,30 +86,27 @@ public:
              << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
     }
 
-    static int getTotalAnimalsFed() {
-        return totalAnimalsFed;
+    // Override the pure virtual function from FarmEntity
+    void performActivity() const override {
+        cout << "The animal activity: Feeding " << animalType << " animals and selling produce." << endl;
     }
+
+    static int getTotalAnimalsFed() { return totalAnimalsFed; }
 };
 
 int Animal::totalAnimalsFed = 0;
 
-// Derived class demonstrating multilevel inheritance
-class Livestock : public Animal {
-public:
-    // Constructor for Livestock calling the base class constructor
-    Livestock(string type, int qty) : Animal(type, qty) {}
-};
-
 int main() {
-    // Using parameterized constructors with inheritance
-    VegetableCrop vegetable("wheat", 10);
-    vegetable.plantCrops();
-    vegetable.allocateWater(20);
+    // Using parameterized constructors
+    Crop crop("wheat", 10);
+    crop.plantCrops();
+    crop.allocateWater(20);
+    crop.performActivity();  // Demonstrates the overridden performActivity method for Crop
 
-    Livestock livestock("cows", 5);
-    livestock.feedAnimals();  // Calls the basic feedAnimals function
-    livestock.feedAnimals("grass", 20);  // Calls the overloaded feedAnimals function
-    livestock.sellProduce("milk", 10, 15);
+    Animal animal("cows", 5);
+    animal.feedAnimals();
+    animal.sellProduce("milk", 10, 15);
+    animal.performActivity();  // Demonstrates the overridden performActivity method for Animal
 
     return 0;
 }
