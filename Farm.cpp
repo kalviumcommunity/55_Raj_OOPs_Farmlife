@@ -4,12 +4,12 @@
 using namespace std;
 
 // Abstract class using a pure virtual function
-class FarmEntity {
+class FarmActivity {
 public:
     virtual void performActivity() const = 0;  // Pure virtual function making FarmEntity an abstract class
 };
 
-class Crop : public FarmEntity {
+class Crop : public FarmActivity {
 private:
     string cropType;
     int quantity;
@@ -25,29 +25,34 @@ public:
         cout << "Total crops planted: " << totalCropsPlanted << endl;
     }
 
-    string getCropType() const {
-        return cropType;
-    }
-
-    // SRP: Crop class is only responsible for crop-specific activities
+    // OCP: Implementing the performActivity method 
     void performActivity() const override {
-        cout << "The crop activity: Planting " << cropType << " crops." << endl;
+        cout << "Planting " << quantity << " " << cropType << " crops." << endl;
     }
 };
 
 int Crop::totalCropsPlanted = 0;
 
-// New class for crop water allocation, following SRP
-class CropWaterManager {
+class CropWaterManager : public FarmActivity {
+private:
+    int liters;
+    string cropType;
+
 public:
-    void allocateWater(const Crop &crop, int liters) const {
+    CropWaterManager(string type, int lit) : cropType(type), liters(lit) {}
+
+    void allocateWater() {
         cout << "You allocated " << liters << " liters of water to your crops. "
-             << "The " << crop.getCropType() << " is growing well." << endl;
+             << "The " << cropType << " is growing well." << endl;
+    }
+
+    // OCP: Implementing the performActivity method 
+    void performActivity() const override {
+        cout << "Allocating " << liters << " liters of water to " << cropType << " crops." << endl;
     }
 };
 
-// Class to handle animal-related data and feeding responsibility
-class Animal : public FarmEntity {
+class Animal : public FarmActivity {
 private:
     string animalType;
     int quantity;
@@ -63,40 +68,51 @@ public:
         cout << "Total animals fed: " << totalAnimalsFed << endl;
     }
 
-    // SRP: Animal class is only responsible for animal-specific activities
+    // OCP: Implementing the performActivity method
     void performActivity() const override {
-        cout << "The animal activity: Feeding " << animalType << " animals." << endl;
+        cout << "Feeding " << quantity << " " << animalType << "." << endl;
     }
 };
 
 int Animal::totalAnimalsFed = 0;
 
-// New class for handling animal produce sales, following SRP
-class AnimalProduceManager {
+class AnimalProduceManager : public FarmActivity {
+private:
+    int qty;
+    int pricePerUnit;
+
 public:
-    void sellProduce(const Animal &animal, string produce, int qty, int pricePerUnit) const {
+    AnimalProduceManager(int quantity, int price) : qty(quantity), pricePerUnit(price) {}
+
+    void sellProduce() {
         int totalPrice = qty * pricePerUnit;
-        cout << "You sold " << qty << " " << produce << " for $" << totalPrice
+        cout << "You sold " << qty << " milk for $" << totalPrice
              << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+    }
+
+    // OCP: Implementing the performActivity method 
+    void performActivity() const override {
+        cout << "Selling " << qty << " units of produce at $" << pricePerUnit << " per unit." << endl;
     }
 };
 
 int main() {
+    // Demonstrating OCP
     Crop crop("wheat", 10);
-    crop.plantCrops();
-    crop.performActivity();  // Demonstrates the overridden performActivity method for Crop
-
-    // CropWaterManager handles the responsibility of watering the crop
-    CropWaterManager waterManager;
-    waterManager.allocateWater(crop, 20);
-
+    CropWaterManager cropWater("wheat", 20);
     Animal animal("cows", 5);
-    animal.feedAnimals();
-    animal.performActivity();  // Demonstrates the overridden performActivity method for Animal
+    AnimalProduceManager produceManager(10, 15);
 
-    // AnimalProduceManager handles the responsibility of selling produce
-    AnimalProduceManager produceManager;
-    produceManager.sellProduce(animal, "milk", 10, 15);
+    // Using the performActivity method polymorphically
+    FarmActivity* activities[] = {&crop, &cropWater, &animal, &produceManager};
+    for (const auto& activity : activities) {
+        activity->performActivity();
+    }
+
+    crop.plantCrops();
+    cropWater.allocateWater();
+    animal.feedAnimals();
+    produceManager.sellProduce();
 
     return 0;
 }
