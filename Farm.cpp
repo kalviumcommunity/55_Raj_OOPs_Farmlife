@@ -3,116 +3,117 @@
 
 using namespace std;
 
-// Abstract class using a pure virtual function
-class FarmActivity {
-public:
-    virtual void performActivity() const = 0;  // Pure virtual function making FarmEntity an abstract class
-};
-
-class Crop : public FarmActivity {
+class Crop {
 private:
     string cropType;
     int quantity;
     static int totalCropsPlanted;
 
-public:
-    Crop(string type, int qty) : cropType(type), quantity(qty) {}
+protected:
+    int calculateHarvestTime() const {
+        return 5; 
+    }
 
-    void plantCrops() {
+public:
+    Crop() : cropType("unknown"), quantity(0) {}  // Default constructor
+
+    Crop(string type, int qty) : cropType(type), quantity(qty) {}  // Parameterized constructor
+
+    virtual void plantCrops() {
         totalCropsPlanted += quantity;
         cout << "You have planted " << quantity << " " << cropType
-             << " crops. They will be ready to harvest in 5 days." << endl;
+             << " crops. They will be ready to harvest in "
+             << calculateHarvestTime() << " days." << endl;
         cout << "Total crops planted: " << totalCropsPlanted << endl;
     }
 
-    // OCP: Implementing the performActivity method 
-    void performActivity() const override {
-        cout << "Planting " << quantity << " " << cropType << " crops." << endl;
+    virtual void allocateWater(int liters) {
+        cout << "You allocated " << liters << " liters of water to your crops. "
+             << "The " << cropType << " is growing well." << endl;
+    }
+
+    static int getTotalCropsPlanted() {
+        return totalCropsPlanted;
     }
 };
 
 int Crop::totalCropsPlanted = 0;
 
-class CropWaterManager : public FarmActivity {
-private:
-    int liters;
-    string cropType;
-
+// Liskov Substitution Principle (LSP) for crops
+class VegetableCrop : public Crop {
 public:
-    CropWaterManager(string type, int lit) : cropType(type), liters(lit) {}
+    VegetableCrop(string type, int qty) : Crop(type, qty) {}
 
-    void allocateWater() {
-        cout << "You allocated " << liters << " liters of water to your crops. "
-             << "The " << cropType << " is growing well." << endl;
-    }
-
-    // OCP: Implementing the performActivity method 
-    void performActivity() const override {
-        cout << "Allocating " << liters << " liters of water to " << cropType << " crops." << endl;
+    void plantCrops() override {
+        Crop::plantCrops();  // Using the base class's plant functionality
     }
 };
 
-class Animal : public FarmActivity {
+class Animal {
 private:
     string animalType;
     int quantity;
     static int totalAnimalsFed;
 
-public:
-    Animal(string type, int qty) : animalType(type), quantity(qty) {}
+protected:
+    int calculateProductionTime() const {
+        return 1;  // Production time in days
+    }
 
-    void feedAnimals() {
+public:
+    Animal() : animalType("unknown"), quantity(0) {}  // Default constructor
+
+    Animal(string type, int qty) : animalType(type), quantity(qty) {}  // Parameterized constructor
+
+    virtual void feedAnimals() {
         totalAnimalsFed += quantity;
         cout << "You have fed " << quantity << " " << animalType
-             << ". They will produce in 1 day(s)." << endl;
+             << ". They will produce in " << calculateProductionTime()
+             << " day(s)." << endl;
         cout << "Total animals fed: " << totalAnimalsFed << endl;
     }
 
-    // OCP: Implementing the performActivity method
-    void performActivity() const override {
-        cout << "Feeding " << quantity << " " << animalType << "." << endl;
+    virtual void sellProduce(string produce, int qty, int pricePerUnit) {
+        int totalPrice = qty * pricePerUnit;
+        cout << "You sold " << qty << " " << produce << " for $" << totalPrice
+             << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+    }
+
+    static int getTotalAnimalsFed() {
+        return totalAnimalsFed;
     }
 };
 
 int Animal::totalAnimalsFed = 0;
 
-class AnimalProduceManager : public FarmActivity {
-private:
-    int qty;
-    int pricePerUnit;
-
+// Liskov Substitution Principle (LSP) for animals
+class Livestock : public Animal {
 public:
-    AnimalProduceManager(int quantity, int price) : qty(quantity), pricePerUnit(price) {}
+    Livestock(string type, int qty) : Animal(type, qty) {}
 
-    void sellProduce() {
-        int totalPrice = qty * pricePerUnit;
-        cout << "You sold " << qty << " milk for $" << totalPrice
-             << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+    void feedAnimals() override {
+        Animal::feedAnimals();  
     }
 
-    // OCP: Implementing the performActivity method 
-    void performActivity() const override {
-        cout << "Selling " << qty << " units of produce at $" << pricePerUnit << " per unit." << endl;
+    void sellProduce(string produce, int qty, int pricePerUnit) override {
+        Animal::sellProduce(produce, qty, pricePerUnit);  
     }
 };
 
 int main() {
-    // Demonstrating OCP
-    Crop crop("wheat", 10);
-    CropWaterManager cropWater("wheat", 20);
-    Animal animal("cows", 5);
-    AnimalProduceManager produceManager(10, 15);
 
-    // Using the performActivity method polymorphically
-    FarmActivity* activities[] = {&crop, &cropWater, &animal, &produceManager};
-    for (const auto& activity : activities) {
-        activity->performActivity();
-    }
+    // Using VegetableCrop and Livestock objects as substitutes for Crop and Animal
 
-    crop.plantCrops();
-    cropWater.allocateWater();
-    animal.feedAnimals();
-    produceManager.sellProduce();
+    Crop* crop = new VegetableCrop("wheat", 10);  
+    crop->plantCrops();
+    crop->allocateWater(20);
+
+    Animal* animal = new Livestock("cows", 5);  
+    animal->feedAnimals();
+    animal->sellProduce("milk", 10, 15);
+
+    delete crop;
+    delete animal;
 
     return 0;
 }
