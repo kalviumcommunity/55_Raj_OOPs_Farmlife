@@ -15,98 +15,88 @@ private:
     int quantity;
     static int totalCropsPlanted;
 
-protected:
-    int calculateHarvestTime() const {
-        return 5;  // Harvest time in days
-    }
-
 public:
-    Crop() : cropType("unknown"), quantity(0) {}  // Default constructor
-    Crop(string type, int qty) : cropType(type), quantity(qty) {}  // Parameterized constructor
-
-    void setCropType(string type) { cropType = type; }
-    string getCropType() const { return cropType; }
-    void setQuantity(int qty) { quantity = qty; }
-    int getQuantity() const { return quantity; }
+    Crop(string type, int qty) : cropType(type), quantity(qty) {}
 
     void plantCrops() {
         totalCropsPlanted += quantity;
         cout << "You have planted " << quantity << " " << cropType
-             << " crops. They will be ready to harvest in "
-             << calculateHarvestTime() << " days." << endl;
+             << " crops. They will be ready to harvest in 5 days." << endl;
         cout << "Total crops planted: " << totalCropsPlanted << endl;
     }
 
-    void allocateWater(int liters) {
-        cout << "You allocated " << liters << " liters of water to your crops. "
-             << "The " << cropType << " is growing well." << endl;
+    string getCropType() const {
+        return cropType;
     }
 
-    // Override the pure virtual function from FarmEntity
+    // SRP: Crop class is only responsible for crop-specific activities
     void performActivity() const override {
-        cout << "The crop activity: Planting and watering " << cropType << " crops." << endl;
+        cout << "The crop activity: Planting " << cropType << " crops." << endl;
     }
-
-    static int getTotalCropsPlanted() { return totalCropsPlanted; }
 };
 
 int Crop::totalCropsPlanted = 0;
 
+// New class for crop water allocation, following SRP
+class CropWaterManager {
+public:
+    void allocateWater(const Crop &crop, int liters) const {
+        cout << "You allocated " << liters << " liters of water to your crops. "
+             << "The " << crop.getCropType() << " is growing well." << endl;
+    }
+};
+
+// Class to handle animal-related data and feeding responsibility
 class Animal : public FarmEntity {
 private:
     string animalType;
     int quantity;
     static int totalAnimalsFed;
 
-protected:
-    int calculateProductionTime() const {
-        return 1;  // Production time in days
-    }
-
 public:
-    Animal() : animalType("unknown"), quantity(0) {}  // Default constructor
-    Animal(string type, int qty) : animalType(type), quantity(qty) {}  // Parameterized constructor
-
-    void setAnimalType(string type) { animalType = type; }
-    string getAnimalType() const { return animalType; }
-    void setQuantity(int qty) { quantity = qty; }
-    int getQuantity() const { return quantity; }
+    Animal(string type, int qty) : animalType(type), quantity(qty) {}
 
     void feedAnimals() {
         totalAnimalsFed += quantity;
         cout << "You have fed " << quantity << " " << animalType
-             << ". They will produce in " << calculateProductionTime()
-             << " day(s)." << endl;
+             << ". They will produce in 1 day(s)." << endl;
         cout << "Total animals fed: " << totalAnimalsFed << endl;
     }
 
-    void sellProduce(string produce, int qty, int pricePerUnit) {
-        int totalPrice = qty * pricePerUnit;
-        cout << "You sold " << qty << " " << produce << " for $" << totalPrice
-             << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
-    }
-
-    // Override the pure virtual function from FarmEntity
+    // SRP: Animal class is only responsible for animal-specific activities
     void performActivity() const override {
-        cout << "The animal activity: Feeding " << animalType << " animals and selling produce." << endl;
+        cout << "The animal activity: Feeding " << animalType << " animals." << endl;
     }
-
-    static int getTotalAnimalsFed() { return totalAnimalsFed; }
 };
 
 int Animal::totalAnimalsFed = 0;
 
+// New class for handling animal produce sales, following SRP
+class AnimalProduceManager {
+public:
+    void sellProduce(const Animal &animal, string produce, int qty, int pricePerUnit) const {
+        int totalPrice = qty * pricePerUnit;
+        cout << "You sold " << qty << " " << produce << " for $" << totalPrice
+             << ". Your total money is now $" << (totalPrice + 100) << "." << endl;
+    }
+};
+
 int main() {
-    // Using parameterized constructors
     Crop crop("wheat", 10);
     crop.plantCrops();
-    crop.allocateWater(20);
     crop.performActivity();  // Demonstrates the overridden performActivity method for Crop
+
+    // CropWaterManager handles the responsibility of watering the crop
+    CropWaterManager waterManager;
+    waterManager.allocateWater(crop, 20);
 
     Animal animal("cows", 5);
     animal.feedAnimals();
-    animal.sellProduce("milk", 10, 15);
     animal.performActivity();  // Demonstrates the overridden performActivity method for Animal
+
+    // AnimalProduceManager handles the responsibility of selling produce
+    AnimalProduceManager produceManager;
+    produceManager.sellProduce(animal, "milk", 10, 15);
 
     return 0;
 }
