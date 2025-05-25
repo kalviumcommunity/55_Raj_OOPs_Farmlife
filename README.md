@@ -69,6 +69,7 @@ g++ -o farm_simulation farm_simulation.cpp
 `
 ./farm_simulation
 `
+
 ##📌 Sample Output
 
 `
