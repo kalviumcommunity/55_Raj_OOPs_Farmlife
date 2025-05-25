@@ -72,14 +72,14 @@ g++ -o farm_simulation farm_simulation.cpp
 
 ##📌 Sample Output
 
-``
+```
 You have planted 10 wheat crops. They will be ready to harvest in 5 days.
 Total crops planted: 10
 You allocated 20 liters of water to your crops. The wheat is growing well.
 You have fed 5 cows. They will produce in 1 day(s).
 Total animals fed: 5
 You sold 10 milk for $150. Your total money is now $250.
-``
+```
 ## 💡 OOP Principle Highlight: Liskov Substitution Principle
 This project uses LSP to allow:
 
